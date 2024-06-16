@@ -5,6 +5,8 @@ import { NFT_CONTRACT, STAKING_CONTRACT } from "../utils/contracts";
 import { useState } from "react";
 import { approve } from "thirdweb/extensions/erc721";
 
+console.log(NFT_CONTRACT)
+
 type OwnedNFTsProps = {
     nft: NFT;
     refetch: () => void;
