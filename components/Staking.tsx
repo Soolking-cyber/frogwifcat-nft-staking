@@ -1,7 +1,7 @@
 'use client';
 
-import { chain } from "@/app/chain";
-import { client } from "@/app/client";
+import { chain } from "../src/app/chain";
+import { client } from "../src/app/client";
 import { ConnectButton, TransactionButton, useActiveAccount, useReadContract } from "thirdweb/react";
 import { StakeRewards } from "./StakeRewards";
 import { NFT_CONTRACT, STAKING_CONTRACT } from "../utils/contracts";

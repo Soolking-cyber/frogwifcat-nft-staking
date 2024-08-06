@@ -1,5 +1,7 @@
 import { client } from "@/app/client";
 import { NFT, prepareContractCall } from "thirdweb";
+import { client } from "../src/app/client";
+import { prepareContractCall } from "thirdweb";
 import { MediaRenderer, TransactionButton } from "thirdweb/react";
 import { NFT_CONTRACT, STAKING_CONTRACT } from "../utils/contracts";
 import { useState } from "react";

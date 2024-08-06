@@ -1,6 +1,6 @@
-# ERC-721 Staking App
+# MAD FROGS STAKING APP
 
-Stake an ERC-721 NFT and earn ERC-20 reward tokens.
+Stake a Madfrogs NFT and earn Crystal reward tokens.
 
 ## Getting Started
 
