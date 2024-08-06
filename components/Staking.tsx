@@ -5,39 +5,29 @@ import { client } from "../src/app/client";
 import { ConnectButton, TransactionButton, useActiveAccount, useReadContract } from "thirdweb/react";
 import { StakeRewards } from "./StakeRewards";
 import { NFT_CONTRACT, STAKING_CONTRACT } from "../utils/contracts";
-import { NFT } from "thirdweb";
 import { useEffect, useState } from "react";
-import { claimTo, getNFTs, ownerOf, totalSupply } from "thirdweb/extensions/erc721";
-import { NFTCard } from "./NFTCard";
+import { claimTo } from "thirdweb/extensions/erc721";
+import { NFTCard, FrogWarsNft } from "./NFTCard";
 import { StakedNFTCard } from "./StakedNFTCard";
+
+type ServerReply = {
+    nfts: FrogWarsNft[]
+}
 
 export const Staking = () => {
     const account = useActiveAccount();
 
-    const [ownedNFTs, setOwnedNFTs] = useState<NFT[]>([]);
+    const [ownedNFTs, setOwnedNFTs] = useState<FrogWarsNft[]>([]);
     
     const getOwnedNFTs = async () => {
-        let ownedNFTs: NFT[] = [];
-
-        const totalNFTSupply = await totalSupply({
-            contract: NFT_CONTRACT,
-        });
-        const nfts = await getNFTs({
-            contract: NFT_CONTRACT,
-            start: 0,
-            count: parseInt(totalNFTSupply.toString()),
-        });
-        
-        for (let nft of nfts) {
-            const owner = await ownerOf({
-                contract: NFT_CONTRACT,
-                tokenId: nft.id,
-            });
-            if (owner === account?.address) {
-                ownedNFTs.push(nft);
-            }
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/nfts/${account?.address!}`);
+        if (  response.status > 299 && response.status < 200 ) {
+            alert(response.statusText);
+            return;
         }
-        setOwnedNFTs(ownedNFTs);
+        const serverReply = await response.json() as ServerReply;
+
+        setOwnedNFTs(serverReply.nfts);
     };
     
     useEffect(() => {
@@ -50,9 +40,12 @@ export const Staking = () => {
         data: stakedInfo,
         refetch: refetchStakedInfo,
     } = useReadContract({
+        queryOptions: {
+            enabled: account?.address !== undefined,
+        },
         contract: STAKING_CONTRACT,
         method: "getStakeInfo",
-        params: [account?.address || ""],
+        params: [account?.address!],
     });
     
     if(account) {

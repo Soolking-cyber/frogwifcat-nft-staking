@@ -1,5 +1,3 @@
-import { client } from "@/app/client";
-import { NFT, prepareContractCall } from "thirdweb";
 import { client } from "../src/app/client";
 import { prepareContractCall } from "thirdweb";
 import { MediaRenderer, TransactionButton } from "thirdweb/react";
@@ -7,13 +5,18 @@ import { NFT_CONTRACT, STAKING_CONTRACT } from "../utils/contracts";
 import { useState } from "react";
 import { approve } from "thirdweb/extensions/erc721";
 
-console.log(NFT_CONTRACT)
-
 type OwnedNFTsProps = {
-    nft: NFT;
+    nft: FrogWarsNft;
     refetch: () => void;
     refecthStakedInfo: () => void;
 };
+
+export type FrogWarsNft = {
+    id: string;
+    name: string;
+    image: string;
+}
+
 
 export const NFTCard = ({ nft, refetch, refecthStakedInfo }: OwnedNFTsProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +26,7 @@ export const NFTCard = ({ nft, refetch, refecthStakedInfo }: OwnedNFTsProps) => 
         <div style={{ margin: "10px" }}>
             <MediaRenderer
                 client={client}
-                src={nft.metadata.image}
+                src={nft.image}
                 style={{
                     borderRadius: "10px",
                     marginBottom: "10px",
@@ -31,7 +34,7 @@ export const NFTCard = ({ nft, refetch, refecthStakedInfo }: OwnedNFTsProps) => 
                     width: "200px"
                 }}
             />
-            <p style={{ margin: "0 10px 10px 10px"}}>{nft.metadata.name}</p>
+            <p style={{ margin: "0 10px 10px 10px"}}>{nft.name}</p>
             <button
                 onClick={() => setIsModalOpen(true)}
                 style={{
@@ -83,7 +86,7 @@ export const NFTCard = ({ nft, refetch, refecthStakedInfo }: OwnedNFTsProps) => 
                         <h3 style={{ margin: "10px 0" }}>You about to stake:</h3>
                         <MediaRenderer
                             client={client}
-                            src={nft.metadata.image}
+                            src={nft.image}
                             style={{
                                 borderRadius: "10px",
                                 marginBottom: "10px"
@@ -94,8 +97,8 @@ export const NFTCard = ({ nft, refetch, refecthStakedInfo }: OwnedNFTsProps) => 
                                 transaction={() => (
                                     approve({
                                         contract: NFT_CONTRACT,
-                                        to: STAKING_CONTRACT.address,
-                                        tokenId: nft.id
+                                        to: STAKING_CONTRACT.address as `0x${string}`,
+                                        tokenId: BigInt(nft.id)
                                     })
                                 )}
                                 style={{
@@ -109,7 +112,7 @@ export const NFTCard = ({ nft, refetch, refecthStakedInfo }: OwnedNFTsProps) => 
                                     prepareContractCall({
                                         contract: STAKING_CONTRACT,
                                         method: "stake",
-                                        params: [[nft.id]]
+                                        params: [[BigInt(nft.id)]]
                                     })
                                 )}
                                 onTransactionConfirmed={() => {
