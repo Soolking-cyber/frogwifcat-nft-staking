@@ -20,7 +20,9 @@ export const Staking = () => {
     const [ownedNFTs, setOwnedNFTs] = useState<FrogWarsNft[]>([]);
     
     const getOwnedNFTs = async () => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_API}/nfts/${account?.address!}`);
+        const url = process.env.NEXT_PUBLIC_SERVER_API ? process.env.NEXT_PUBLIC_SERVER_API : "https://frogwars-backend-9dee014c0e65.herokuapp.com";
+
+        const response = await fetch(`${url}/nfts/${account?.address!}`);
         if (  response.status > 299 && response.status < 200 ) {
             alert(response.statusText);
             return;
